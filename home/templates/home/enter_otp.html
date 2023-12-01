@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'static/home.css' %}">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
         body {
             display: flex;
             justify-content: center;
@@ -28,7 +30,7 @@
         }
 
         .submit-button {
-            background-color: #4CAF50;
+            background-color: #4c3c3c;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -39,7 +41,10 @@
         }
 
         .submit-button:hover {
-            background-color: #45a049;
+            background-color: #ffffff;
+            color: #4c3c3c;
+            border: 1px solid #4c3c3c;
+            transition: 0.3s;
         }
 
         h4 {
@@ -52,6 +57,7 @@
         }
 
         @media (max-width: 600px) {
+
             /* Apply responsive styles for screens with a width of 600px or less */
             .otp-input {
                 width: 100%;
@@ -63,20 +69,21 @@
         }
     </style>
 </head>
+
 <body>
     <div class="form">
         <form class="otp-form" method="POST" action="{% url 'home:submit_otp' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <h4 class="text">Enter OTP:</h4>
             <input type="text" id="otp" name="otp" class="otp-input" required>
-            
+
             <br><br>
             <span class="message">{{msg}}</span>
         </form>
         <a href="{% url 'home:submit_otp' %}">
-            <button  class="submit-button">Submit</button>
+            <button class="submit-button">Submit</button>
         </a>
     </div>
 </body>
-</html>
 
+</html>

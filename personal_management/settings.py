@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'management',
         'USER': 'postgres',
-        'PASSWORD' : '',
+        'PASSWORD' : 'blahcoat',
         'HOST': 'localhost',
         'PORT':'5432'
     }
@@ -121,6 +121,9 @@ USE_I18N = True
 USE_TZ = True
 
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -138,7 +141,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = '33@gmail.com'
+EMAIL_HOST_USER = 'disdummy33@gmail.com'
 EMAIL_HOST_PASSWORD = 'ggdm haeh eslx aikb'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False

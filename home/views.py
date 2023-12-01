@@ -105,4 +105,8 @@ def media_submission(request):
 
     return render(request, 'your_template.html')  # Ensure you return a response for GET requests
 
-    
+from django.http import JsonResponse
+
+def clear_session(request):
+    request.session.flush() 
+    return  render(request, 'home/enter_otp.html')

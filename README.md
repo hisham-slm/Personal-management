@@ -22,7 +22,7 @@
 </p>
 <pre>
     <code>
-        git clone https://github.com/your_username/project.git
+        git clone https://github.com/hisham-slm/Personal-management
         cd project
         python -m venv env
         source env/bin/activate (For Linux/Mac)

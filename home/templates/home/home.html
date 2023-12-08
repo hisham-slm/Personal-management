@@ -5,42 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="{% static 'static/home.css' %}">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Make the body take up the full viewport height */
-            margin: 0; /* Remove default margin to center the button */
-        }
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 
-        .button {
-            background-color: #4c3c3c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s; 
-        }
-
-        .button:hover {
-            background-color: #ffffff;
-            color: #4c3c3c;
-            border: 1px solid #4c3c3c;
-            transition: 0.3s;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .button {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-        }
-    </style>
 </head>
 <body>
     <a href="{% url 'home:generate_otp' %}">

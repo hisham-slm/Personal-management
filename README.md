@@ -21,6 +21,9 @@
     To run this project locally, follow these steps:
 </p>
 <pre>
+    <ul>
+        <li>Create database and add it in settings.py</li>
+    </ul>
     <code>
         git clone https://github.com/hisham-slm/Personal-management
         cd project

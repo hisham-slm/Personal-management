@@ -1,17 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
 
-/* body {
+.container{
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-} */
-
-
+}
 .form {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -253,16 +249,14 @@ input[type="password"]:focus {
     align-items: left;
 }
 
-/* Style for the container to create a grid layout */
 .media-card-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    /* Adjust column width as needed */
     grid-gap: 20px;
-    /* Adjust gap between cards */
 }
 
-/* Style for each .media-card element */
+
+
 .media-card {
     display: flex;
     flex-direction: column;
@@ -275,7 +269,6 @@ input[type="password"]:focus {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Style for the image */
 .media-card img {
     max-width: 100%;
     height: auto;
@@ -291,6 +284,19 @@ input[type="password"]:focus {
     color: #333;
 }
 
+.buttons-card{
+    display: flex;
+    justify-content: center ;
+}
+.buttons-card {
+    text-align: center;
+}
+
+.buttons-card button {
+    display: block;
+    margin: 5px auto; 
+}
+
 ::-webkit-scrollbar {
     width: 10px;
   }
@@ -299,7 +305,6 @@ input[type="password"]:focus {
     background: #fff;
   }
   
-  /* Change scrollbar handle or thumb color */
   ::-webkit-scrollbar-thumb {
     background: #4c3c3c;
   }

@@ -3,9 +3,9 @@
 <html>
 
 <head>
-    
+
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    
+
 </head>
 
 
@@ -27,16 +27,194 @@
                 </svg>
             </div>
         </div>
-        {% for password_detail,masked_password,unmasked_password in zipped_data %}
-        <div class="card">
-            <h2>{{ password_detail.title }}</h2>
-            <p>{{ password_detail.username }}</p>
-            <p class="site-password">{{ masked_password }}</p>
-            <p class="hidden-password" style="display: none;">{{ unmasked_password }}</p>
-            <button class="password-show-button" onclick="togglePasswordVisibility(this)">Show</button>
-        </div>
 
-        {% endfor %}
+
+
+        <dialog id="update-modal" class="modal">
+            <div id="udpate-modal-close-button">
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30">
+                    <path
+                        d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z">
+                    </path>
+                </svg>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" action="{% url 'home:update_password' %}">
+
+                {% csrf_token %}
+                <h1 id="update-modal-title"></h1>
+                <input name="title" id="update-modal-title-hidden" class="form-input" type="hidden">
+                <input name="username" id="update-modal-username" class="form-input" type="text" required>
+                <input name="password" id="update-modal-password" class="form-input" type="text" required>
+                <div class="update-submit-button">
+                    <button>Submit</button>
+                </div>
+
+
+            </form>
+        </dialog>
+
+
+        <dialog id="delete-modal" class="modal">
+            <div id="delete-modal-close-button">
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30">
+                    <path
+                        d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z">
+                    </path>
+                </svg>
+            </div>
+            <div class="buttons-card">
+                <form method="POST" enctype="multipart/form-data" action="{% url 'home:delete_password' %}">
+                    {% csrf_token %}
+                    <input name="title" id="delete-modal-title-hidden" type="hidden">
+                    <button type="submit">Yes</button>
+                    <button id="no-button">No</button>
+                </form>
+                
+                
+
+            </div>
+
+
+        </dialog>
+
+
+
+        <script>
+            zippedData = JSON.parse('{{zipped_data | escapejs}} ')
+            var passwordsContainer = document.querySelector('.passwords');
+
+
+
+            function togglePasswordVisibility(button) {
+
+                const card = button.parentElement;
+                const maskedPassword = this.maskedPassword;
+                const showButton = document.getElementsByClassName('password-show-button')
+                var index = Array.from(card.parentNode.children).indexOf(card);
+                var currentUnmaskedPassword = zippedData.unsmasked_password[index - 4]
+                var sitePassword = card.querySelector('.site-password')
+
+
+                if (button.textContent == 'Show') {
+                    button.textContent = "Hide"
+                    temp = sitePassword.innerHTML
+                    sitePassword.innerHTML = currentUnmaskedPassword
+
+                } else {
+                    button.textContent = 'Show'
+                    sitePassword.innerHTML = temp
+                }
+            }
+
+            function updatePassword(button) {
+                const card = button.parentElement;
+                var updateModal = document.getElementById('update-modal')
+                var updateModalTitle = document.getElementById('update-modal-title')
+                var index = Array.from(card.parentNode.children).indexOf(card);
+                var unmaskedPassword = zippedData.unsmasked_password[index - 4]
+                var updateModalPassword = document.getElementById('update-modal-password');
+                var updateModalUsername = document.getElementById('update-modal-username')
+                var updateModalCloseButton = document.getElementById('udpate-modal-close-button')
+                var updateSubmitButton = document.getElementById('update-submit-button')
+                var updateModalTitleHidden = document.getElementById('update-modal-title-hidden')
+
+
+                console.log(unmaskedPassword)
+
+
+                updateModal.showModal()
+
+
+                updateModalTitle.textContent = zippedData.title[index - 4]
+                updateModalPassword.value = zippedData.unsmasked_password[index - 4]
+                updateModalTitleHidden.value = zippedData.title[index - 4]
+                updateModalUsername.value = zippedData.username[index - 4]
+
+
+                updateModalCloseButton.addEventListener('click', function () {
+                    updateModal.close();
+                });
+
+            }
+
+
+            function deletePassoword(button) {
+                var deleteModal = document.getElementById('delete-modal')
+                var deleteModalCloseButton = document.getElementById('delete-modal-close-button')
+                var deleteModalTitleHidden = document.getElementById('delete-modal-title-hidden')
+                var noButton = document.getElementById('no-button')
+
+                var card = button.parentElement;
+                var index = Array.from(card.parentNode.children).indexOf(card);
+
+                title = zippedData.title[index - 4]
+                deleteModalTitleHidden.value = title
+
+
+
+                deleteModal.showModal()
+
+
+                deleteModalCloseButton.addEventListener('click', function () {
+                    deleteModal.close();
+                });
+                noButton.addEventListener('click', function () {
+                    deleteModal.close()
+                })
+            }
+
+
+
+            for (var i = 0; i < zippedData.title.length; i++) {
+                var card = document.createElement('div');
+                card.classList.add('card');
+
+                var title = document.createElement('h2');
+                title.textContent = zippedData.title[i];
+
+                var username = document.createElement('p');
+                username.textContent = zippedData.username[i];
+
+                var maskedPassword = document.createElement('p');
+                maskedPassword.classList.add('site-password');
+                maskedPassword.textContent = zippedData.masked_password[i];
+
+
+
+                var showButton = document.createElement('button');
+                showButton.classList.add('password-show-button');
+                showButton.textContent = 'Show';
+                showButton.setAttribute('onclick', 'togglePasswordVisibility(this)')
+
+
+                var updateButton = document.createElement('button')
+                updateButton.classList.add('update-button')
+                updateButton.textContent = 'Update'
+                updateButton.setAttribute('onclick', 'updatePassword(this)')
+
+
+                var deleteButton = document.createElement('button');
+                deleteButton.classList.add('delete-button')
+                deleteButton.textContent = 'Delete'
+                deleteButton.setAttribute('onclick', 'deletePassoword(this)')
+
+                // Append elements to the card
+                card.appendChild(title);
+                card.appendChild(username);
+                card.appendChild(maskedPassword);
+                card.appendChild(showButton);
+                card.appendChild(updateButton)
+                card.appendChild(deleteButton)
+
+                // Append the card to the container
+                passwordsContainer.appendChild(card);
+            }
+
+
+
+        </script>
+
 
 
     </div>
@@ -89,170 +267,161 @@
         </div>
     </div>
 
-        <dialog id="media-modal" class="modal">
-            <div id="media-modal-close-button">
-                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30">
-                    <path
-                        d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z">
-                    </path>
-                </svg>
-            </div>
+    <dialog id="media-modal" class="modal">
+        <div id="media-modal-close-button">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30">
+                <path
+                    d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z">
+                </path>
+            </svg>
+        </div>
 
-                <form method="POST" enctype="multipart/form-data" action="{% url 'home:media_submission' %}">
-                    {% csrf_token %}
-                    <div class="contents">
-                        <div class="left">
-                            <div id="filePreview"></div>
-                            <label for="input" id="upload-button">Upload File
-                                <input name="media" id="input" type="file" required onchange="handleFileInput(event)">
-                            </label>
-                            <h5 id="error"></h5>
-                        </div>
-                        <div class="right">
-                            <div>
-                                <input name="caption" id="caption" type="text" placeholder="Caption...">
-                            </div>
-                            <button onclick="showMedia()" type="submit" id="share">Submit</button>
-                        </div>
+        <form method="POST" enctype="multipart/form-data" action="{% url 'home:media_submission' %}">
+            {% csrf_token %}
+            <div class="contents">
+                <div class="left">
+                    <div id="filePreview"></div>
+                    <label for="input" id="upload-button">Upload File
+                        <input name="media" id="input" type="file" required onchange="handleFileInput(event)">
+                    </label>
+                    <h5 id="error"></h5>
+                </div>
+                <div class="right">
+                    <div>
+                        <input name="caption" id="caption" type="text" placeholder="Caption...">
                     </div>
-                </form>
-        </dialog>
+                    <button onclick="showMedia()" type="submit" id="share">Submit</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
 
 
 
 
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
-        <script>
-            var mediaButton = document.getElementById('media');
-            var passwordButton = document.getElementById('password');
-            var sitePassword = document.getElementById('site-password')
-            var hiddenPassword = document.getElementById('hidden-password')
-            var passwordShowButton = document.getElementById('password-show-button')
-            var passwordModal = document.getElementById('password-modal')
-            var mediaModal = document.getElementById('media-modal')
-            var plusIcon = document.getElementById('plus-icon')
-            var mediaPlusIcon = document.getElementById('media-plus-icon')
-            var modalCloseButton = document.getElementById('modal-close-button')
-            var mediaModalCloseButton = document.getElementById('media-modal-close-button')
-            var maskedPassword = ''
-            var currentPage = 'password'
+    <script>
+        var mediaButton = document.getElementById('media');
+        var passwordButton = document.getElementById('password');
+        var sitePassword = document.getElementById('site-password')
+        var hiddenPassword = document.getElementById('hidden-password')
+        var passwordShowButton = document.getElementById('password-show-button')
+        var passwordModal = document.getElementById('password-modal')
+        var mediaModal = document.getElementById('media-modal')
+        var plusIcon = document.getElementById('plus-icon')
+        var mediaPlusIcon = document.getElementById('media-plus-icon')
+        var modalCloseButton = document.getElementById('modal-close-button')
+        var mediaModalCloseButton = document.getElementById('media-modal-close-button')
+        var maskedPassword = ''
+        var currentPage = 'password'
+        var zipped_data = {}
 
-            if (currentPage == 'media'){
-                showMedia
-            }
-            else{
-                showPassword
-            }
-            $(window).on('beforeunload', function () {
-                $.ajax({
-                    url: 'http://127.0.0.1:8000/clear_session',
-                    method: 'GET',
-                    async: false,
-                });
+        if (currentPage == 'media') {
+            showMedia
+        }
+        else {
+            showPassword
+        }
+        $(window).on('beforeunload', function () {
+            $.ajax({
+                url: 'http://127.0.0.1:8000/clear_session',
+                method: 'GET',
+                async: false,
             });
+        });
 
 
-            function handleFileInput(event) {
-                const file = event.target.files[0];
-                const allowedTypes = ['image/jpeg', 'image/png'];
 
-                if (file && allowedTypes.includes(file.type)) {
-                    const reader = new FileReader();
 
-                    reader.onload = function (e) {
-                        const filePreview = document.getElementById('filePreview');
-                        filePreview.innerHTML = `<img src="${e.target.result}" alt="File Preview" class="preview-image" style="max-width:100%; max-height:100%; object-fit:cover; position: relative; top: 0; left: 0; ">`;
-                    };
+        function handleFileInput(event) {
+            const file = event.target.files[0];
+            const allowedTypes = ['image/jpeg', 'image/png'];
 
-                    const error = document.getElementById('error');
-                    error.innerHTML = '';
+            if (file && allowedTypes.includes(file.type)) {
+                const reader = new FileReader();
 
-                    reader.readAsDataURL(file);
-                    console.log('Selected image file:', file);
-                } else {
-                    const errorElement = document.getElementById('error');
-                    errorElement.innerHTML = 'Please select images only';
-                    console.log('Please select a valid image file.');
-                }
+                reader.onload = function (e) {
+                    const filePreview = document.getElementById('filePreview');
+                    filePreview.innerHTML = `<img src="${e.target.result}" alt="File Preview" class="preview-image" style="max-width:100%; max-height:100%; object-fit:cover; position: relative; top: 0; left: 0; ">`;
+                };
+
+                const error = document.getElementById('error');
+                error.innerHTML = '';
+
+                reader.readAsDataURL(file);
+                console.log('Selected image file:', file);
+            } else {
+                const errorElement = document.getElementById('error');
+                errorElement.innerHTML = 'Please select images only';
+                console.log('Please select a valid image file.');
+            }
+        }
+
+
+
+
+
+        function showPassword() {
+            var mediaElements = document.getElementsByClassName('media');
+            var passwordElements = document.getElementsByClassName('passwords');
+
+            currentPage = 'password'
+            console.log(currentPage)
+
+            for (var i = 0; i < mediaElements.length; i++) {
+                mediaElements[i].style.display = 'none';
             }
 
-
-
-
-            
-            function showPassword() {
-                var mediaElements = document.getElementsByClassName('media');
-                var passwordElements = document.getElementsByClassName('passwords');
-
-                currentPage = 'password'
-                console.log(currentPage)
-
-                for (var i = 0; i < mediaElements.length; i++) {
-                    mediaElements[i].style.display = 'none';
-                }
-
-                for (var i = 0; i < passwordElements.length; i++) {
-                    passwordElements[i].style.display = 'flex';
-                }
+            for (var i = 0; i < passwordElements.length; i++) {
+                passwordElements[i].style.display = 'flex';
             }
-            passwordButton.onclick = showPassword
+        }
+        passwordButton.onclick = showPassword
 
-            function showMedia(){
-                var mediaElements = document.getElementsByClassName('media');
-                var passwordElements = document.getElementsByClassName('passwords');
+        function showMedia() {
+            var mediaElements = document.getElementsByClassName('media');
+            var passwordElements = document.getElementsByClassName('passwords');
 
-                currentPage = 'media'
-                console.log(currentPage)
+            currentPage = 'media'
+            console.log(currentPage)
 
-                for (var i = 0; i < passwordElements.length; i++) {
-                    passwordElements[i].style.display = 'none';
-                }
-
-                for (var i = 0; i < mediaElements.length; i++) {
-                    mediaElements[i].style.display = 'flex';
-                }
+            for (var i = 0; i < passwordElements.length; i++) {
+                passwordElements[i].style.display = 'none';
             }
 
-            mediaButton.onclick = showMedia
-
-
-            function togglePasswordVisibility(button) {
-                const card = button.parentElement;
-                const maskedPassword = card.querySelector('.site-password');
-                const hiddenPassword = card.querySelector('.hidden-password');
-
-                if (maskedPassword.style.display === 'none') {
-                    maskedPassword.style.display = 'block';
-                    hiddenPassword.style.display = 'none';
-                } else {
-                    maskedPassword.style.display = 'none';
-                    hiddenPassword.style.display = 'block';
-                }
+            for (var i = 0; i < mediaElements.length; i++) {
+                mediaElements[i].style.display = 'flex';
             }
+        }
+
+        mediaButton.onclick = showMedia
 
 
-            plusIcon.onclick = function () {
-                passwordModal.showModal()
-            }
-            mediaPlusIcon.onclick = function () {
-                mediaModal.showModal()
-            }
 
 
-            modalCloseButton.onclick = function () {
-                passwordModal.close()
 
-            }
-            mediaModalCloseButton.onclick = function () {
-                mediaModal.close()
-            }
+        plusIcon.onclick = function () {
+            passwordModal.showModal()
+        }
+        mediaPlusIcon.onclick = function () {
+            mediaModal.showModal()
+        }
 
-        </script>
+
+        modalCloseButton.onclick = function () {
+            passwordModal.close()
+
+        }
+        mediaModalCloseButton.onclick = function () {
+            mediaModal.close()
+        }
+
+    </script>
 
 </body>
 

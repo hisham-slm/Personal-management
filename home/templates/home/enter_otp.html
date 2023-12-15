@@ -11,18 +11,19 @@
 </head>
 
 <body>
-    <div class="form">
-        <form class="otp-form" method="POST" action="{% url 'home:submit_otp' %}" enctype="multipart/form-data">
+    <div>
+        <form class="form" method="POST" action="{% url 'home:submit_otp' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <h4 class="text">Enter OTP:</h4>
             <input type="text" id="otp" name="otp" class="otp-input" required>
 
-            <br><br>
             <span class="message">{{msg}}</span>
+            <a href="{% url 'home:submit_otp' %}">
+                <button class="submit-button">Submit</button>
+            </a>
         </form>
-        <a href="{% url 'home:submit_otp' %}">
-            <button class="submit-button">Submit</button>
-        </a>
+        <br>
+        
     </div>
 </body>
 

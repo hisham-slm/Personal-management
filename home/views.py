@@ -4,7 +4,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse
-
+import json
 from home.decorators import auth_user
 from home.models import Media, Password
 
@@ -49,19 +49,27 @@ def submit_otp(request):
 @auth_user
 def index_page(request):
     passwords_details = Password.objects.all()
+    title = [password_obj.title for password_obj in passwords_details]
     unmasked_passwords  = [password_obj.password for password_obj in passwords_details]
-
-    medias = Media.objects.all()
-
+    username  = [password_obj.username for password_obj in passwords_details]
     masked_passwords = []
 
     for password in unmasked_passwords:
         masked_password = '*' *  len(password)
         masked_passwords.append(masked_password)
     
+    medias = Media.objects.all()
     
 
-    zipped_data = zip(passwords_details, masked_passwords,unmasked_passwords)
+    
+    zipped_data = []
+
+    zipped_data = json.dumps({
+        'title': title,
+        'username': username,
+        'unsmasked_password':unmasked_passwords,
+        'masked_password': masked_passwords
+    })  
 
 
 
@@ -91,6 +99,34 @@ def password_submission(request):
         msg = "Something went wrong"
         return redirect('home:index')
     
+
+@auth_user
+def update_password(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        username = request.POST['username']
+        password = request.POST['password']
+    password_details = Password.objects.get(title = title)
+
+    password_details.title = title
+    password_details.username = username
+    password_details.password = password
+
+    password_details.save()
+
+    return redirect('home:index')
+
+@auth_user
+def delete_password(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+
+    password_detail = Password.objects.get(title = title)
+
+    password_detail.delete()
+    return redirect('home:index')
+
+
 
 @auth_user
 def media_submission(request):

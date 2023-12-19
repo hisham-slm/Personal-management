@@ -143,6 +143,18 @@ def media_submission(request):
 
 from django.http import JsonResponse
 
+
+@auth_user
+def media_deletion(request):
+    if request.method == 'POST':
+        media_id = request.POST['media']
+        media_want_to_be_delete = Media.objects.get(id=media_id)
+
+        media_want_to_be_delete.delete()
+    
+    return redirect('home:index')
+
+
 def clear_session(request):
     request.session.flush() 
     return  render(request, 'home/enter_otp.html')

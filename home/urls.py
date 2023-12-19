@@ -12,8 +12,7 @@ urlpatterns = [
     path('update_password', views.update_password, name='update_password'),
     path('delete_password', views.delete_password, name='delete_password'),
     path('media_submission',views.media_submission,name='media_submission'),
-    path('clear_session',views.clear_session, name='clear_session'),
-    # path('show_password/<int:pid>',views.show_password, name='show_password')
-    
+    path('clear_session',views.clear_session, name='clear_session'), 
+    path('media_deletion',views.media_deletion, name='media_deletion'),    
 
 ]

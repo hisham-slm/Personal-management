@@ -8,6 +8,7 @@ import json
 from home.decorators import auth_user
 from home.models import Media, Password
 
+
 # Create your views here.
 
 def home(request):
@@ -139,9 +140,8 @@ def media_submission(request):
 
         return redirect('home:index')
 
-    return render(request, 'your_template.html')  # Ensure you return a response for GET requests
+    
 
-from django.http import JsonResponse
 
 
 @auth_user

@@ -1,0 +1,1 @@
+having some issue with the creating script.js in static folder (something with zippedData)
